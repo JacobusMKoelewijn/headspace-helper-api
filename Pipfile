@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 fastapi = "*"
 uvicorn = "*"
+jinja2 = "*"
+aiofiles = "*"
+python-multipart = "*"
 
 [dev-packages]
 

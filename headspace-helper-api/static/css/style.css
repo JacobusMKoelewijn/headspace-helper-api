@@ -1,0 +1,139 @@
+:root {
+  --color-background: #181824;
+  --color-background-light: #262638;
+  --color-text: #48dbfb;
+  );
+}
+
+html,
+body {
+    overflow-x: hidden;
+    background-color: #09050d;
+    color: var(--color-text);
+    font-size: 20px;
+    position: relative;
+    height: 100%;
+}
+
+body {
+    background-image: url(/static/icons/viinum_logo_ring.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+h1 {
+color: #48dbfb;
+}
+
+h2 {
+color: white;
+}
+
+h3 {
+font-size: 70%;
+color: white;
+}
+
+.author {
+position: absolute;
+right: 10px;
+bottom: 5px;
+
+}
+
+.left_panel {
+    position: absolute;
+    left: 0;
+    background-color: var(--color-background);
+    width: 50%;
+    border-bottom-right-radius: 20px;
+    transform: translateX(-1000px);
+    transition: transform 0.6s ease-out;
+    z-index: 10;
+}
+
+.left_panel_text {
+    margin-right: 20px;
+    float: right;
+    width: 50%;
+}
+
+.left_panel_list {
+    color: white;
+}
+
+.left_reminder {
+    padding-right: 10px;
+    width: 720px;
+    background-color: var(--color-background-light);
+    position: absolute;
+    left: 0;
+    margin-top: 200px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    transform: translateX(-1000px);
+    transition: transform 0.7s ease-out;
+}
+
+.left_reminder_list {
+    margin-top: 20px;
+    color: white;
+    font-size: 70%;
+}
+
+.right_panel {
+    position: absolute;
+    right: 0;
+    top: 40%;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    width: 40%;
+    height: 200px;
+
+    background-color: var(--color-background);
+    transform: translateX(1000px);
+    transition: transform 0.6s ease-out;
+}
+
+.right_panel_logo {
+    position: absolute;
+    top: 40px;
+    right: 10px;
+}
+
+.right_panel_arrow {
+    position: absolute;
+    bottom: 70px;
+    left: 350px;
+    transition: transform 0.6s ease-out;
+}
+
+.left_panel_logo {
+    position: absolute;
+    top: 30px;
+    left: 10px;
+}
+
+.extract_data {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 80%;
+    transition: background-color 0.3s ease;
+}
+
+.hidden {
+    display: none;
+}
+
+.pulse {
+    animation: pulsate 1.5s ease-out;
+    animation-iteration-count: infinite;
+    opacity: 0.3;
+}
+@keyframes pulsate {
+    0% { opacity: 0.3; }
+    50% { opacity: 1.0; }
+    100% { opacity: 0.3; }
+}
