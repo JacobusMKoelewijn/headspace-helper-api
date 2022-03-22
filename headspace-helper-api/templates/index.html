@@ -61,13 +61,14 @@
     <div>
         <h2 class="right_panel_text" style="margin-left: 10px; margin-top: 10px;">Upload all <span style="color: #48dbfb;">.txt</span> and <span style="color: #48dbfb;">.pdf</span> files.</h2>
     </div>
+    <form action="/upload_files" method="post" enctype="multipart/form-data">
     <div style="margin-bottom: 65px; margin-left: 10px" class="input-group extract_data">
-        <input type="file" class="form-control js--extract_data pulse" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" multiple>
-        <button style="color: #48dbfb;" class="btn btn-outline-secondary js--extract_data_btn hidden" type="button" id="inputGroupFileAddon04">Extract data</button>
+        <input type="file" name="files" class="form-control js--extract_data pulsed" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload" multiple>
+        <button style="color: #48dbfb;" class="btn btn-outline-secondary js--extract_data_btn hidden" type="submit" id="inputGroupFileAddon04">Extract data</button>
     </div>
+    </form>
     <object class="right_panel_logo" data="{{ url_for('static', path='/icons/files.svg') }}" width="125" height="125"></object>
 </div>
-
 
 
 
