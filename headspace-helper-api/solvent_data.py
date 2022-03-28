@@ -33,23 +33,18 @@ def find_solvent_data(solvent_name, file_type):
                 if line == "\n" and peak_table_found:
                     break
 
-            return solvent_data if solvent_found else None
+            return solvent_data if solvent_found else (0, 0, 0)
 
 
 class Sample:
     """
-    Class to set sample attributes used in Solvent class.
+    Class to set sample_code attribute.
     """
     samples = []
 
     def __init__(self, sample_code):
         self.sample_code = sample_code
-        self.sample_tag_1 = None
-        self.sample_tag_2 = None
-        self.sample_tag_3 = None
-        self.sample_tag_S_A4 = None
-        self.sample_tag_S_A5 = None
-        self.sample_tag_S_A6 = None
+
 
 class Solvent:
     """
@@ -77,16 +72,24 @@ class Solvent:
 
         # Set attributes for every sample tag data:
         for i in Sample.samples:
-            i.sample_tag_1 = find_solvent_data(self.name, f"{i.sample_code}-1")
-            i.sample_tag_2 = find_solvent_data(self.name, f"{i.sample_code}-2")
-            i.sample_tag_3 = find_solvent_data(self.name, f"{i.sample_code}-3")
-            i.sample_tag_S_A4 = find_solvent_data(self.name, f"{i.sample_code}-S-A4")
-            i.sample_tag_S_A5 = find_solvent_data(self.name, f"{i.sample_code}-S-A5")
-            i.sample_tag_S_A6 = find_solvent_data(self.name, f"{i.sample_code}-S-A6")
+            setattr(self, f"sample_{i.sample_code}_tag_1", find_solvent_data(self.name, f"{i.sample_code}-1"))
+            setattr(self, f"sample_{i.sample_code}_tag_2", find_solvent_data(self.name, f"{i.sample_code}-2"))
+            setattr(self, f"sample_{i.sample_code}_tag_3", find_solvent_data(self.name, f"{i.sample_code}-3"))
+            setattr(self, f"sample_{i.sample_code}_tag_S_A4", find_solvent_data(self.name, f"{i.sample_code}-S-A4"))
+            setattr(self, f"sample_{i.sample_code}_tag_S_A5", find_solvent_data(self.name, f"{i.sample_code}-S-A5"))
+            setattr(self, f"sample_{i.sample_code}_tag_S_A6", find_solvent_data(self.name, f"{i.sample_code}-S-A6"))
 
-        # self.print_data()
+            # self.sample_tag_1 = find_solvent_data(self.name, f"{i.sample_code}-1")
+            # self.sample_tag_2 = find_solvent_data(self.name, f"{i.sample_code}-2")
+            # self.sample_tag_3 = find_solvent_data(self.name, f"{i.sample_code}-3")
+            # self.sample_tag_S_A4 = find_solvent_data(self.name, f"{i.sample_code}-S-A4")
+            # self.sample_tag_S_A5 = find_solvent_data(self.name, f"{i.sample_code}-S-A5")
+            # self.sample_tag_S_A6 = find_solvent_data(self.name, f"{i.sample_code}-S-A6")
+
+        self.print_data()
 
     def print_data(self):
+
         print("Solvent objects")
         print(Solvent.solvents)
         print("Sample objects")
@@ -99,12 +102,26 @@ class Solvent:
         print("### B-file Data ###")
         print(self.b3_1, self.b3_2, self.b3_3, self.b3_4, self.b3_5, self.b3_6, self.b3_7, self.b3_8)
         print("### sample tag Data ###")
-        for i in Sample.samples:
-            print(i.sample_code)
-            print(i.sample_tag_1)
-            print(i.sample_tag_2)
-            print(i.sample_tag_3)
-            print(i.sample_tag_S_A4)
-            print(i.sample_tag_S_A5)
-            print(i.sample_tag_S_A6)
-        print("###################################")
+        for i in Solvent.solvents:
+            for j in Sample.samples:
+                print(getattr(i, f"sample_{j.sample_code}_tag_1"))
+                print(getattr(i, f"sample_{j.sample_code}_tag_2"))
+                print(getattr(i, f"sample_{j.sample_code}_tag_3"))
+                print(getattr(i, f"sample_{j.sample_code}_tag_S_A4"))
+                print(getattr(i, f"sample_{j.sample_code}_tag_S_A5"))
+                print(getattr(i, f"sample_{j.sample_code}_tag_S_A6"))
+
+
+class Diluent:
+    """
+    Class to isolate diluent.
+    """
+    diluent = None
+
+    def __init__(self, solvent_coa_data):
+        self.diluent_name = solvent_coa_data[0]
+        self.diluent_manufacturer = solvent_coa_data[1]
+        self.diluent_catalog_number = solvent_coa_data[2]
+        self.diluent_lot_number = solvent_coa_data[3]
+        self.diluent_expiration_date = solvent_coa_data[4][:3] + " " + solvent_coa_data[4][3:]
+        self.diluent_purity = float(solvent_coa_data[5][:-5])

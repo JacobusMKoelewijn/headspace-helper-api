@@ -6,7 +6,7 @@ import shutil
 from typing import List
 from . import root_dir
 from os import listdir
-from .solvent_data import Solvent, Sample
+from .solvent_data import Solvent, Diluent, Sample
 from .add_to_template import Template
 import glob
 import os
@@ -28,7 +28,19 @@ def get_unique_samples():
     return unique_samples
 
 
-# template = Template()
+def clear_all_data():
+    input_files = glob.glob(root_dir + "/input_data/" + "*")
+
+    for f in input_files:
+        os.remove(f)
+
+    Solvent.solvents.clear()
+    Sample.samples.clear()
+
+    template.wb = ""
+
+
+template = Template()
 
 
 @app.get("/")
@@ -44,43 +56,36 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
     # Create an instances of the Sample class for every unique sample and store list as class attribute.
     for i in get_unique_samples():
-        # print(i)
         i = Sample(i)
-        # print(i)
         Sample.samples.append(i)
 
-    # Create an instances of the Solvent class for every solvent and store list as class attribute.
+    # Create an instances of the Solvent class for every solvent and store list as class attribute. Exclude the diluent.
     for i in glob.glob(root_dir + "/input_data/" + "*.pdf"):
-        j = Solvent(os.path.basename(i).split())
-        Solvent.solvents.append(j)
+        if os.path.basename(i).split()[0] == "NMP" or os.path.basename(i).split()[0] == "DMI" or os.path.basename(i).split()[0] == "DMAC":
+            d = Diluent(os.path.basename(i).split())
+            Diluent.diluent = d
+        else:
+            j = Solvent(os.path.basename(i).split())
+            Solvent.solvents.append(j)
 
     # Create a template instance:
 
-    template.create_solvent_sheets()
+    try:
+        template.create_solvent_sheets()
+    except:
+        clear_all_data()
 
-    js_test = template.return_collected_messages()
+    collected_messages = template.return_collected_messages()
 
-    print(js_test)
-
+    clear_all_data()
 
     # Remove all previous data:
-    files = glob.glob(root_dir + "/input_data/" + "*")
-    for f in files:
-        os.remove(f)
 
-    Solvent.solvents.clear()
-    Sample.samples.clear()
+    return collected_messages, Template.template_constructed
 
-    # return "succes"
-    return FileResponse(root_dir + "/output_data/HS_Quantification Template (HH v 1.3).xlsx", filename="HS_Quantification Tempate (HH v 1.3).xlsx")
 
-@app.get("/upload_files")
-def upload_files():
-    js_test = template.return_collected_messages()
-    return js_test
-
-# @app.post("/messages")
-# def messages():
-#     print("being called")
-#     js_test = template.return_collected_messages()
-#     return js_test
+@app.post("/get_template")
+async def get_template(request: Request):
+    print("sending")
+    return FileResponse(root_dir + "/output_data/HS_Quantification Template (HH v 2.0) (processed).xlsx",
+                        filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
