@@ -27,8 +27,17 @@ extractData.addEventListener('input', function(e) {
 });
 
 extractDataBtn.addEventListener('click', function(e) {
+    console.log("receiving")
 
-    console.log("test")
+    fetch('/upload_files', {
+        method: 'GET'
+    })
+    .then(function (response) {
+    return response.json();
+    }).then(function (text) {
+        console.log(text)
+    })
+
 });
 
 

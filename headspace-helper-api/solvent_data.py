@@ -33,11 +33,33 @@ def find_solvent_data(solvent_name, file_type):
                 if line == "\n" and peak_table_found:
                     break
 
-            return solvent_data if solvent_found else (0, 0, 0)
+            return solvent_data if solvent_found else None
 
+
+class Sample:
+    """
+    Class to set sample attributes used in Solvent class.
+    """
+    samples = []
+
+    def __init__(self, sample_code):
+        self.sample_code = sample_code
+        self.sample_tag_1 = None
+        self.sample_tag_2 = None
+        self.sample_tag_3 = None
+        self.sample_tag_S_A4 = None
+        self.sample_tag_S_A5 = None
+        self.sample_tag_S_A6 = None
 
 class Solvent:
+    """
+    Class to store retention time, peak area, and peak height as solvent attributes.
+    """
+    solvents = []
+
     def __init__(self, solvent_coa_data):
+
+        # Set attributes for solvent CoA data:
         self.name = solvent_coa_data[0]
         self.manufacturer = solvent_coa_data[1]
         self.catalog_number = solvent_coa_data[2]
@@ -45,31 +67,44 @@ class Solvent:
         self.expiration_date = solvent_coa_data[4][:3] + " " + solvent_coa_data[4][3:]
         self.purity = float(solvent_coa_data[5][:-5])
 
-        # print(self.name, self.manufacturer, self.catalog_number, self.lot_number, self.expiration_date, self.purity)
+        # Set attributes for A1-A12 data:
+        for i in range(13):
+            setattr(self, "a" + f"{i}", find_solvent_data(self.name, "A" + f"{i}"))
 
-        self.a1 = find_solvent_data(self.name, "A1")
-        self.a2 = find_solvent_data(self.name, "A2")
-        self.a3 = find_solvent_data(self.name, "A3")
-        self.a4 = find_solvent_data(self.name, "A4")
-        self.a5 = find_solvent_data(self.name, "A5")
-        self.a6 = find_solvent_data(self.name, "A6")
-        self.a7 = find_solvent_data(self.name, "A7")
-        self.a8 = find_solvent_data(self.name, "A8")
-        self.a9 = find_solvent_data(self.name, "A9")
-        self.a10 = find_solvent_data(self.name, "A10")
-        self.a11 = find_solvent_data(self.name, "A11")
-        self.a12 = find_solvent_data(self.name, "A12")
-        self.b3_1 = find_solvent_data(self.name, "B3.1")
-        self.b3_2 = find_solvent_data(self.name, "B3.2")
-        self.b3_3 = find_solvent_data(self.name, "B3.3")
-        self.b3_4 = find_solvent_data(self.name, "B3.4")
-        self.b3_5 = find_solvent_data(self.name, "B3.5")
-        self.b3_6 = find_solvent_data(self.name, "B3.6")
-        self.b3_7 = find_solvent_data(self.name, "B3.7")
-        self.b3_8 = find_solvent_data(self.name, "B3.8")
+        # Set attributes for B3.1-B3.8 data:
+        for i in range(9):
+            setattr(self, "b3_" + f"{i}", find_solvent_data(self.name, "B3." + f"{i}"))
 
+        # Set attributes for every sample tag data:
+        for i in Sample.samples:
+            i.sample_tag_1 = find_solvent_data(self.name, f"{i.sample_code}-1")
+            i.sample_tag_2 = find_solvent_data(self.name, f"{i.sample_code}-2")
+            i.sample_tag_3 = find_solvent_data(self.name, f"{i.sample_code}-3")
+            i.sample_tag_S_A4 = find_solvent_data(self.name, f"{i.sample_code}-S-A4")
+            i.sample_tag_S_A5 = find_solvent_data(self.name, f"{i.sample_code}-S-A5")
+            i.sample_tag_S_A6 = find_solvent_data(self.name, f"{i.sample_code}-S-A6")
 
-class Sample:
-    def __init__(self, sample_data):
-        self.name = sample_data
-        print(self.name)
+        # self.print_data()
+
+    def print_data(self):
+        print("Solvent objects")
+        print(Solvent.solvents)
+        print("Sample objects")
+        print(Sample.samples)
+        print("### CoA Data ###")
+        print(self.name, self.manufacturer, self.catalog_number, self.lot_number, self.expiration_date, self.purity)
+        print("### A-file Data ###")
+        print(self.a1, self.a2, self.a3, self.a4, self.a5, self.a6,
+              self.a7, self.a8, self.a9, self.a10, self.a11, self.a12)
+        print("### B-file Data ###")
+        print(self.b3_1, self.b3_2, self.b3_3, self.b3_4, self.b3_5, self.b3_6, self.b3_7, self.b3_8)
+        print("### sample tag Data ###")
+        for i in Sample.samples:
+            print(i.sample_code)
+            print(i.sample_tag_1)
+            print(i.sample_tag_2)
+            print(i.sample_tag_3)
+            print(i.sample_tag_S_A4)
+            print(i.sample_tag_S_A5)
+            print(i.sample_tag_S_A6)
+        print("###################################")
