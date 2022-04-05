@@ -75,9 +75,9 @@
     </div>
     <form action="/upload_files" id="upload_form" method="post" enctype="multipart/form-data">
         <div style="margin-bottom: 65px; margin-left: 10px" class="input-group extract_data">
-            <input type="file" name="files" class="form-control js--extract_data pulse" id="inputGroupFile04"
+            <input type="file" name="files" class="form-control js--extract_data pulse_" id="inputGroupFile04"
                    aria-describedby="inputGroupFileAddon04" aria-label="Upload" multiple>
-            <button style="color: #48dbfb;" class="btn btn-outline-secondary js--extract_data_btn hidden" type="submit"
+            <button style="color: #48dbfb;" class="btn btn-outline-secondary js--extract_data_btn hidden2" type="submit"
                     id="inputGroupFileAddon04">Extract data
             </button>
         </div>
@@ -91,11 +91,12 @@
 
 <div class="feedback_panel">
     <div>
-        <h2 class="feedback_text_title" style="margin-left: 10px; margin-top: 10px;"></h2>
+        <h2 class="feedback_text_status" style="margin-left: 35px; margin-top: 10px;"></h2>
         <h3 class="feedback_text"></h3>
     </div>
 </div>
 
+<div class="lds-ring spinner hidden"><div></div><div></div><div></div><div></div></div>
 
 {% endblock %}
 

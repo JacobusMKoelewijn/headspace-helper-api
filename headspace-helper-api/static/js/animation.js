@@ -9,9 +9,9 @@ const rightPanelText = document.querySelector('.right_panel_text');
 const feedbackPanel = document.querySelector('.feedback_panel');
 const uploadForm = document.querySelector('#upload_form');
 const feedbackPanelText = document.querySelector('.feedback_text');
-const feedbackPanelTextTitle = document.querySelector('.feedback_text_title');
+const feedbackPanelTextStatus = document.querySelector('.feedback_text_status')
 const mockPanel = document.querySelector('#get_template');
-
+const spinner = document.querySelector('.spinner')
 
 const panelShift = function() {
     leftPanel.style.transform = 'translateX(0px)'
@@ -19,15 +19,25 @@ const panelShift = function() {
     leftReminder.style.transform = 'translateX(0px)'
 };
 
-const feedbackPanelShow = function(feedback) {
-    feedbackPanel.style.transform = 'translateX(0px)'
-    feedbackPanelTextTitle.innerHTML = (feedback[1] ? 'Success!' : "Failed!")
-    feedbackPanelText.innerHTML = `<ul>${feedback[0]}</ul>`
-}
+const feedbackPanelShow = function (feedback) {
+  let feedbackList = ""
+  feedbackPanel.style.transform = "translateX(0px)";
+  feedbackPanelTextStatus.innerHTML = feedback[0] ? "Success!" : feedback[1];
+  feedbackPanel.style.backgroundColor = feedback[0] ? "#78e08f" : "#e55039"
+
+  for (const message of feedback[3]) {
+    console.log(message);
+    feedbackList += `<li>${message}</li>`;
+  }
+
+  feedbackPanelText.innerHTML = `<ul><em>${feedback[2]}</em><br><br> ${feedbackList}</ul>`;
+};
+
 
 async function getTemplate() {
     console.log("submitting")
     mockPanel.submit()
+    spinner.classList.add('hidden');
 }
 
 const pulsatingInput = function() {
@@ -36,14 +46,16 @@ const pulsatingInput = function() {
 
 extractData.addEventListener('input', function(e) {
     if (extractData.files.length > 0) {
-        extractDataBtn.classList.remove('hidden');
+        extractDataBtn.classList.remove('hidden2');
         extractData.classList.remove('pulse')
         extractDataBtn.classList.add('pulse')
         rightPanelText.innerHTML = "Click  <span style='color: #48dbfb;'>Extract data</span>."
     }
 });
 
-
+extractDataBtn.addEventListener('click', function(e) {
+        spinner.classList.remove('hidden');
+});
 
 
 uploadForm.addEventListener('submit', (e) => {
@@ -56,8 +68,10 @@ uploadForm.addEventListener('submit', (e) => {
     }).then((body) => {
     console.log(body)
          feedbackPanelShow(body)
-         if (body[1]) {
+         if (body[0]) {
             getTemplate()
+         } else {
+            spinner.classList.add('hidden');
          }
     }).catch((error) => {
        console.error(error)
