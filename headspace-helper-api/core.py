@@ -10,17 +10,16 @@ class Sample:
     Class to store tag attributes for everey unique sample and every solvent.
     """
 
-    def __init__(self, sample_code, sample_data, sample_s_data):
+    def __init__(self, sample_code, sample_data):
         self.sample_code = sample_code
 
         for key, val in sample_data.items():
             self.__dict__[key] = val
 
-        for key, val in sample_s_data.items():
-            self.__dict__[key] = val
-
-        print(self.sample_code, sample_data)
-
+        # print(self.sample_code, sample_data)
+        # print(self.__dict__)
+        # print(self.__dict__['1,4-Dioxane'])
+        # print(self.__dict__['1,4-Dioxane']['tag-1'])
 
 class Diluent:
     """

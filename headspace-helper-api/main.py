@@ -84,6 +84,7 @@ def get_unique_samples(txt_files):
 
 
 def find_solvent_data(solvent_name, file_type, temp_dir):
+    # don't need glob.glob?
     """
     Extract the retention time, peak area, and peak height from the data files and return as either integer or
     float for every solvent in [solvents]. Only extract the data below the '[Peak Table (Ch1)]' line and stop
@@ -171,20 +172,20 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 solvent_name = file.split()[0]
 
                 solvent_data[solvent_name] = {
-                    f'tag-{i + 1}:': find_solvent_data(solvent_name, f"{sample_code}-{i + 1}",
+                    f'tag-{i + 1}': find_solvent_data(solvent_name, f"{sample_code}-{i + 1}",
                                                        temp_dir) for i in range(3)
+
                 }
 
-                solvent_s_data[solvent_name] = {
-                    f'tag-S-A{i + 3}:': find_solvent_data(solvent_name, f"{sample_code}-S-A{i + 3}",
-                                                          temp_dir) for i in range(3)
-                }
+                for i in range(3):
+                    solvent_data[solvent_name][f"tag-S-A{i + 4}"] = find_solvent_data(solvent_name, f"{sample_code}-S-A{i + 4}", temp_dir)
 
-            samples.append(Sample(sample_code, solvent_data, solvent_s_data))
 
+
+            samples.append(Sample(sample_code, solvent_data))
 
     # # Add data to template.
-    Template(solvents, samples, diluent, unique_samples)
+    Template(solvents, samples, diluent)
 
     if Template.constructed:
         return True, "test1", "A Template has been created", ""
@@ -204,5 +205,6 @@ async def upload_files(files: List[UploadFile] = File(...)):
 async def get_template(request: Request):
     print("sending")
     print(Template.temp_output_dir.name)
+    # Close/remove temp_dir?
     return FileResponse(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx",
                         filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")

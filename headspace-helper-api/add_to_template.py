@@ -23,23 +23,25 @@ class Template:
     constructed = False
     temp_output_dir = tempfile.TemporaryDirectory()
 
-    def __init__(self, solvents, samples, diluent, unique_samples):
+    def __init__(self, solvents, samples, diluent):
         self.wb = openpyxl.load_workbook(root_dir + "/template_file/HS_Quantification Template (HH v 2.0).xlsx")
         self.solvent_sheets = None
+        self.feedback = []
         self.solvents = solvents
         self.samples = samples
         self.diluent = diluent
-        self.unique_samples = unique_samples
+        # self.unique_samples = unique_samples
+
 
         self.create_solvent_sheets()
         self.plot_chart()
         self.add_coa_data()
         self.add_area_height_data_a()
         self.add_area_height_data_b()
-        # self.add_sample_data()
+        self.add_sample_data()
         self.save_template()
 
-        print(self.samples)
+
 
     def create_solvent_sheets(self):
         """ Create a wb sheet for every solvent"""
@@ -107,7 +109,7 @@ class Template:
             self.solvent_sheets[self.solvents[0].name]["C22"] = self.diluent.catalog_number
             self.solvent_sheets[self.solvents[0].name]["D22"] = self.diluent.lot_number
         except:
-            self.collected_messages += f"<li>CoA of diluent not provided or incorrect format is used.</li>"
+            self.feedback.append += f"CoA of diluent not provided."
         #
         # Add CoA for 2. Reference standards:
         for solvent in self.solvents:
@@ -156,16 +158,14 @@ class Template:
 
     def add_sample_data(self):
 
-        for j in range(len(self.unique_samples)):
+        for j in range(len(self.samples)):
             self.solvent_sheets[self.solvents[0].name][f"A{105 + (j * 6)}"] = self.samples[j].sample_code
 
         for solvent in self.solvents:
-            for y, sample in enumerate(self.unique_samples):
+            for y, sample in enumerate(self.samples):
                 for z in range(3):
-                    try:
-                        self.solvent_sheets[solent.name][f"I{105 + z + (y * 6)}"] = getattr(solvent, f"sample_{j.sample_code}_tag_{z + 1}")[0]
-                    except TypeError:
-                        pass
+                    self.solvent_sheets[solvent.name][f"I{105 + z + (y * 6)}"] = getattr(sample.__dict__, [solvent.name][f"tag-{z + 1}"])
+
         #
         #         try:
         #             self.solvent_sheets[i.name][f"I{108 + (y * 6)}"] = getattr(i, f"sample_{j.sample_code}_tag_S_A6")[0]
