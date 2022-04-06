@@ -16,10 +16,12 @@ from . import root_dir
 from . import cells_with_reference
 from .core import Solvent, Diluent, Sample
 import tempfile
-
+# from tempfile import TemporaryDirectory
 
 class Template:
+
     constructed = False
+    temp_output_dir = tempfile.TemporaryDirectory()
 
     def __init__(self, solvents, samples, diluent, unique_samples):
         self.wb = openpyxl.load_workbook(root_dir + "/template_file/HS_Quantification Template (HH v 2.0).xlsx")
@@ -176,7 +178,7 @@ class Template:
         #
 
     def save_template(self):
-        self.wb.save(root_dir + "/output_data/HS_Quantification Template (HH v 2.0) (processed).xlsx")
+        self.wb.save(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx")
         Template.constructed = True
     #     self.collected_messages += "</ul><h1>Template is ready!</h1>"
     #

@@ -203,5 +203,6 @@ async def upload_files(files: List[UploadFile] = File(...)):
 @app.post("/get_template")
 async def get_template(request: Request):
     print("sending")
-    return FileResponse(root_dir + "/output_data/HS_Quantification Template (HH v 2.0) (processed).xlsx",
+    print(Template.temp_output_dir.name)
+    return FileResponse(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx",
                         filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")

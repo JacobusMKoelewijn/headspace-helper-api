@@ -19,6 +19,8 @@ class Sample:
         for key, val in sample_s_data.items():
             self.__dict__[key] = val
 
+        print(self.sample_code, sample_data)
+
 
 class Diluent:
     """
