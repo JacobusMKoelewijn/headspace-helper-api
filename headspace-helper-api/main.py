@@ -145,6 +145,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
         solvents = []
         samples = []
         unique_samples = get_unique_samples(txt_files)
+        diluent = None
 
         # Create instances of Solvent class:
         for file in coa_files:
@@ -188,7 +189,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
     Template(solvents, samples, diluent)
 
     if Template.constructed:
-        return True, "test1", "A Template has been created", ""
+        return True, Template.feedback.title, Template.feedback.solution, Template.feedback.information
 
     # collected_messages = template.return_collected_messages()
     # feedback = "Successfull"
