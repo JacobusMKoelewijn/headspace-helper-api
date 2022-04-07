@@ -10,6 +10,7 @@ jinja2 = "*"
 aiofiles = "*"
 python-multipart = "*"
 openpyxl = "*"
+gunicorn = "*"
 
 [dev-packages]
 

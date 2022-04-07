@@ -126,6 +126,7 @@ async def index(request: Request):
 @app.post("/upload_files")
 async def upload_files(files: List[UploadFile] = File(...)):
     with TemporaryDirectory() as temp_dir:
+        print(f"putting files in{temp_dir}")
         for file in files:
             with open(temp_dir + '/' + file.filename, 'wb') as temp_file:
                 shutil.copyfileobj(file.file, temp_file)
@@ -186,6 +187,8 @@ async def upload_files(files: List[UploadFile] = File(...)):
             samples.append(Sample(sample_code, solvent_data))
 
     # # Add data to template.
+    # with Template(solvents, samples, diluent) as template:
+    #     print("testing")
     Template(solvents, samples, diluent)
 
     if Template.constructed:
@@ -199,13 +202,17 @@ async def upload_files(files: List[UploadFile] = File(...)):
     # Remove all previous data:
 
     # return collected_messages, Template.template_constructed
+
+
     return True, [], [], []
 
 
 @app.post("/get_template")
 async def get_template(request: Request):
     print("sending")
-    print(Template.temp_output_dir.name)
-    # Close/remove temp_dir?
-    return FileResponse(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx",
-                        filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
+    # print(f"Template found in: {Template.temp_output_dir.name}")
+    # Template.temp_output_dir.cleanup()
+    return FileResponse(root_dir + "/output_data" + "/HS_Quantification Template (HH v 2.0) (processed).xlsx", filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
+
+
+
