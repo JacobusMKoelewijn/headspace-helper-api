@@ -164,16 +164,11 @@ class Template:
         for solvent in self.solvents:
             for y, sample in enumerate(self.samples):
                 for z in range(3):
-                    self.solvent_sheets[solvent.name][f"I{105 + z + (y * 6)}"] = getattr(sample.__dict__, [solvent.name][f"tag-{z + 1}"])
+                    self.solvent_sheets[solvent.name][f"I{105 + z + (y * 6)}"] = sample.__dict__[solvent.name][f"tag-{z + 1}"][0]
+                    self.solvent_sheets[solvent.name][f"I{110 - z + (y * 6)}"] = sample.__dict__[solvent.name][f"tag-S-A{z + 4}"][0]
 
-        #
-        #         try:
-        #             self.solvent_sheets[i.name][f"I{108 + (y * 6)}"] = getattr(i, f"sample_{j.sample_code}_tag_S_A6")[0]
-        #             self.solvent_sheets[i.name][f"I{109 + (y * 6)}"] = getattr(i, f"sample_{j.sample_code}_tag_S_A5")[0]
-        #             self.solvent_sheets[i.name][f"I{110 + (y * 6)}"] = getattr(i, f"sample_{j.sample_code}_tag_S_A4")[0]
-        #         except TypeError:
-        #             pass
-        #
+
+
         # self.collected_messages += f"<li>Data of <span style='color: #48dbfb;'>{len(Sample.samples)}</span> samples has been transferred successfully!</li>"
         #
 
