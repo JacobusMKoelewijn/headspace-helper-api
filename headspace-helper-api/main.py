@@ -5,9 +5,8 @@ from fastapi.responses import FileResponse
 import shutil
 from typing import List
 from . import root_dir
-from os import listdir
-from .core import Solvent, Diluent, Sample
-from .add_to_template import Template
+from .data import Solvent, Diluent, Sample
+from .template import Template
 import glob
 import os
 import tempfile
@@ -28,6 +27,9 @@ def count_files(txt_files, coa_files):
         feedback["title"] = "No Coa files provided"
         feedback["solution"] = "Please add up to 12 solvent CoA's"
         feedback["information"] = ""
+
+        print("right")
+        print(feedback)
 
         return False, feedback
     elif len(coa_files) > 12:
@@ -197,21 +199,11 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
             samples.append(Sample(sample_code, solvent_data))
 
-
+    # Create a Template:
     Template(solvents, samples, diluent)
 
     if Template.constructed:
         print(f"Template found in: {Template.temp_output_dir.name}")
         return FileResponse(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx", filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
-
-
-
-# @app.post("/get_template")
-# async def get_template(request: Request):
-#     print("sending")
-#     print(f"Template found in: {Template.temp_output_dir.name}")
-#     Template.temp_output_dir.cleanup()
-    # return FileResponse(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx",
-    #                     filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
 
 

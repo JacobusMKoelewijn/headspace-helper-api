@@ -1,13 +1,11 @@
-from . import root_dir
 import glob
-from os import listdir
 import os
 import re
 
 
 class Sample:
     """
-    Class to store tag attributes for everey unique sample and every solvent.
+    Class to store tag attributes for every unique sample and every solvent.
     """
 
     def __init__(self, sample_code, sample_data):

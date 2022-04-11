@@ -34,6 +34,12 @@ const feedbackPanelShow = function (feedback) {
   feedbackPanelText.innerHTML = `<ul><em>${feedback[1].solution}</em><br><br> ${feedbackList}</ul>`;
 };
 
+const successPanel = function() {
+    feedbackPanel.style.transform = "translateX(0px)";
+    feedbackPanelTitle.innerHTML = "Success!";
+    feedbackPanel.style.backgroundColor = "#78e08f"
+}
+
 
 async function getTemplate(response) {
 
@@ -66,40 +72,32 @@ uploadForm.addEventListener('submit', (e) => {
         }).then((response) => {
             return response.blob();
         }).then((response) => {
-            console.log(response)
-            const blob = new Blob([response], {type: 'application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-            console.log(blob)
-            const downloadUrl = URL.createObjectURL(blob);
-            console.log(downloadUrl)
-            const a = document.createElement("a");
-            a.href = downloadUrl;
-            a.download = "HS_Quantification Template (HH v 2.0) (processed).xlsx";
-            document.body.appendChild(a);
-            a.click();
-            spinner.classList.add('hidden');
-            const test = {
-                title: "test",
-                solution: "aap"
-            };
-//            feedbackPanelShow(test)
-//            if (response[0]) {
-//                getTemplate(response)
-//            } else {
-//
-//                spinner.classList.add('hidden')
-//            }
+
+            if (response.type == "application/json") {
+                console.log(response)
+                response.text().then((response) => {
+                    const json = JSON.parse(response)
+                    feedbackPanelShow(json)
+                    spinner.classList.add('hidden');
+                })
+            } else {
+                const blob = new Blob([response], {type: 'application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+                console.log(blob)
+                const downloadUrl = URL.createObjectURL(blob);
+                console.log(downloadUrl)
+                const a = document.createElement("a");
+                a.href = downloadUrl;
+                a.download = "HS_Quantification Template (HH v 2.0) (processed).xlsx";
+                document.body.appendChild(a);
+                a.click();
+                spinner.classList.add('hidden');
+                successPanel()
+            }
+
             }).catch((error) => {
                console.error(error)
             });
 });
-
-    //  feedbackPanelShow(body)
-      //   if (body[0]) {
-       //     getTemplate()
-       //  } else {
-        //    spinner.classList.add('hidden');
-        // }
-
 
 window.setTimeout(panelShift, 500);
 pulsatingInput()

@@ -10,7 +10,7 @@ from openpyxl.drawing.line import LineProperties
 from openpyxl.drawing.text import Paragraph, ParagraphProperties, CharacterProperties, Font
 from . import root_dir
 from . import cells_with_reference
-from .core import Solvent, Diluent, Sample
+from .data import Solvent, Diluent, Sample
 import tempfile
 
 warnings.simplefilter("ignore")
@@ -18,14 +18,14 @@ warnings.simplefilter("ignore")
 
 class Template:
     constructed = False
-    feedback = {}
+    # feedback = {}
     temp_output_dir = tempfile.TemporaryDirectory()
     print(f"current output dir: {temp_output_dir}")
 
     def __init__(self, solvents, samples, diluent):
         self.wb = openpyxl.load_workbook(root_dir + "/template_file/HS_Quantification Template (HH v 2.0).xlsx")
         self.solvent_sheets = None
-        self.feedback = []
+        # self.feedback = []
         self.solvents = solvents
         self.samples = samples
         self.diluent = diluent
@@ -103,7 +103,8 @@ class Template:
             self.solvent_sheets[self.solvents[0].name]["C22"] = self.diluent.catalog_number
             self.solvent_sheets[self.solvents[0].name]["D22"] = self.diluent.lot_number
         except:
-            self.feedback.append(f"CoA of diluent not provided.")
+            pass
+            # self.feedback.append(f"CoA of diluent not provided.")
 
         # Add CoA for 2. Reference standards:
         for solvent in self.solvents:
@@ -114,7 +115,7 @@ class Template:
             self.solvent_sheets[solvent.name]["F27"] = solvent.expiration_date
             self.solvent_sheets[solvent.name]["E27"] = solvent.purity
 
-        self.feedback.append(f"Found {len(self.solvents)} solvents.")
+        # self.feedback.append(f"Found {len(self.solvents)} solvents.")
 
     def add_area_height_data_a(self):
 
@@ -128,7 +129,7 @@ class Template:
             for j in range(4):
                 self.solvent_sheets[solvent.name][f"F{66 + j}"] = getattr(solvent, "a" + f"{4 - j}")[0]
 
-        self.feedback.append(f"Data of all A-files have been added successfully!")
+        # self.feedback.append(f"Data of all A-files have been added successfully!")
 
     def add_area_height_data_b(self):
 
@@ -149,7 +150,7 @@ class Template:
             except:
                 pass
 
-        self.feedback.append(f"Data of all B-files have been added successfully!")
+        # self.feedback.append(f"Data of all B-files have been added successfully!")
 
     def add_sample_data(self):
 
@@ -164,11 +165,11 @@ class Template:
                     self.solvent_sheets[solvent.name][f"I{110 - z + (y * 6)}"] = \
                         sample.__dict__[solvent.name][f"tag-S-A{z + 4}"][0]
 
-        self.feedback.append(f"Data of all {len(self.samples)} samples have been added successfully!")
+        # self.feedback.append(f"Data of all {len(self.samples)} samples have been added successfully!")
 
-        Template.feedback["title"] = "Success!"
-        Template.feedback["solution"] = "A template has been created"
-        Template.feedback["information"] = self.feedback
+        # Template.feedback["title"] = "Success!"
+        # Template.feedback["solution"] = "A template has been created"
+        # Template.feedback["information"] = self.feedback
 
 
     def save_template(self):
