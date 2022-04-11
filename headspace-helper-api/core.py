@@ -16,10 +16,6 @@ class Sample:
         for key, val in sample_data.items():
             self.__dict__[key] = val
 
-        # print(self.sample_code, sample_data)
-        # print(self.__dict__)
-        # print(self.__dict__['1,4-Dioxane'])
-        # print(self.__dict__['1,4-Dioxane']['tag-1'])
 
 class Diluent:
     """
@@ -50,11 +46,3 @@ class Solvent(Diluent):
         for key, val in b_file_data.items():
             self.__dict__[key] = val
 
-        # print(self.name, a_file_data, b_file_data)
-
-
-class Feedback:
-    def __init__(self, feedback):
-        self.title = feedback[0]
-        self.solution = feedback[1]
-        self.information = feedback[2]

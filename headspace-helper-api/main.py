@@ -6,7 +6,7 @@ import shutil
 from typing import List
 from . import root_dir
 from os import listdir
-from .core import Solvent, Diluent, Sample, Feedback
+from .core import Solvent, Diluent, Sample
 from .add_to_template import Template
 import glob
 import os
@@ -21,20 +21,28 @@ templates = Jinja2Templates(directory="headspace-helper-api/templates")
 
 
 def count_files(txt_files, coa_files):
+
+    feedback = {}
+
     if not coa_files:
-        feedback = Feedback(
-            ["No CoA files provided", "Please add up to 12 solvent CoA's:", ""]
-        )
+        feedback["title"] = "No Coa files provided"
+        feedback["solution"] = "Please add up to 12 solvent CoA's"
+        feedback["information"] = ""
+
         return False, feedback
     elif len(coa_files) > 12:
-        feedback = Feedback(
-            ["Over 12 CoA files provided", "Please add less then 12 solvent CoA's:", ""]
-        )
+
+        feedback["title"] = "Over 12 CoA files provided"
+        feedback["solution"] = "Please add less then 12 solvent CoA's"
+        feedback["information"] = ""
+
         return False, feedback
     elif len(get_unique_samples(txt_files)) > 5:
-        feedback = Feedback(
-            ["Over 5 samples provided", "Please add no more then 5 samples:", ""]
-        )
+
+        feedback["title"] = "Over 5 samples provided"
+        feedback["solution"] = "Please add no more then 5 samples"
+        feedback["information"] = ""
+
         return False, feedback
     else:
         return True, None
@@ -45,6 +53,8 @@ def check_file_format(txt_files, coa_files):
     Check if the correct format is used for every .txt and .pdf sample. Return True if no mistakes are found. Otherwise,
     return a list of incorrect_files.
     """
+
+    feedback = {}
     regex_sample_file = "(^[A-Z]{3}([0-9]{5}|[0-9]{8})-[0-9]{1,3}-([A-Z]|[0-9]{1,3})-([1-3]|S-A[4-6]))"
     regex_a_file = "(^A[1-8]_)"
     regex_b_file = "(^B3.[1-8]_)"
@@ -62,9 +72,10 @@ def check_file_format(txt_files, coa_files):
     if not incorrect_files:
         return True, None
     else:
-        feedback = Feedback(
-            ["Incorrect file format!", "Please correct the following file names:", incorrect_files]
-        )
+        feedback["title"] = "Incorrect file format"
+        feedback["solution"] = "Please correct the following file names:"
+        feedback["information"] = incorrect_files
+
         return False, feedback
 
 
@@ -126,7 +137,7 @@ async def index(request: Request):
 @app.post("/upload_files")
 async def upload_files(files: List[UploadFile] = File(...)):
     with TemporaryDirectory() as temp_dir:
-        print(f"putting files in{temp_dir}")
+        print(f"putting files in {temp_dir}")
         for file in files:
             with open(temp_dir + '/' + file.filename, 'wb') as temp_file:
                 shutil.copyfileobj(file.file, temp_file)
@@ -138,7 +149,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
         (file_format_correct, feedback) = check_file_format(txt_files, coa_files)
 
         if not file_count_correct or not file_format_correct:
-            return False, feedback.title, feedback.solution, feedback.information
+            return False, feedback
 
         # Extract all required data from uploaded files and create instances of Diluent, Solvent and Sample.
         # Store extracted data as class instance attributes.
@@ -175,44 +186,31 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
                 solvent_data[solvent_name] = {
                     f'tag-{i + 1}': find_solvent_data(solvent_name, f"{sample_code}-{i + 1}",
-                                                       temp_dir) for i in range(3)
+                                                      temp_dir) for i in range(3)
 
                 }
 
                 for i in range(3):
-                    solvent_data[solvent_name][f"tag-S-A{i + 4}"] = find_solvent_data(solvent_name, f"{sample_code}-S-A{i + 4}", temp_dir)
-
-
+                    solvent_data[solvent_name][f"tag-S-A{i + 4}"] = find_solvent_data(solvent_name,
+                                                                                      f"{sample_code}-S-A{i + 4}",
+                                                                                      temp_dir)
 
             samples.append(Sample(sample_code, solvent_data))
 
-    # # Add data to template.
-    # with Template(solvents, samples, diluent) as template:
-    #     print("testing")
+
     Template(solvents, samples, diluent)
 
     if Template.constructed:
-        return True, Template.feedback.title, Template.feedback.solution, Template.feedback.information
-
-    # collected_messages = template.return_collected_messages()
-    # feedback = "Successfull"
-
-    # clear_all_data()
-
-    # Remove all previous data:
-
-    # return collected_messages, Template.template_constructed
+        return FileResponse(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx", filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
 
 
-    return True, [], [], []
 
-
-@app.post("/get_template")
-async def get_template(request: Request):
-    print("sending")
-    # print(f"Template found in: {Template.temp_output_dir.name}")
-    # Template.temp_output_dir.cleanup()
-    return FileResponse(root_dir + "/output_data" + "/HS_Quantification Template (HH v 2.0) (processed).xlsx", filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
-
+# @app.post("/get_template")
+# async def get_template(request: Request):
+#     print("sending")
+#     print(f"Template found in: {Template.temp_output_dir.name}")
+#     Template.temp_output_dir.cleanup()
+    # return FileResponse(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx",
+    #                     filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
 
 

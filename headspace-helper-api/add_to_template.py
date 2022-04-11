@@ -1,9 +1,5 @@
-# To suppress a warning by openpyxl.
 import warnings
-
-warnings.simplefilter("ignore")
-
-import sys, os
+import os
 import openpyxl
 from openpyxl.chart import ScatterChart, Reference, Series
 from openpyxl.chart.trendline import Trendline, TrendlineLabel
@@ -16,14 +12,15 @@ from . import root_dir
 from . import cells_with_reference
 from .core import Solvent, Diluent, Sample
 import tempfile
-# from tempfile import TemporaryDirectory
-from .core import Feedback
+
+warnings.simplefilter("ignore")
+
 
 class Template:
-
     constructed = False
-    feedback = None
+    feedback = {}
     temp_output_dir = tempfile.TemporaryDirectory()
+    print(f"current output dir: {temp_output_dir}")
 
     def __init__(self, solvents, samples, diluent):
         self.wb = openpyxl.load_workbook(root_dir + "/template_file/HS_Quantification Template (HH v 2.0).xlsx")
@@ -33,8 +30,6 @@ class Template:
         self.samples = samples
         self.diluent = diluent
 
-        # self.unique_samples = unique_samples
-
         self.create_solvent_sheets()
         self.plot_chart()
         self.add_coa_data()
@@ -43,21 +38,17 @@ class Template:
         self.add_sample_data()
         self.save_template()
 
-    # def __enter__(self):
-    #     print('enter method called')
-    #     return self
-
     def create_solvent_sheets(self):
         """ Create a wb sheet for every solvent"""
 
-        # Add a reference to each cell that is referenced in the original template:
+        # Add a reference for each cell that is referenced in the original template:
         for j, solvent in enumerate(self.solvents):
-            for z in cells_with_reference[9:]:
-                self.wb[f"solvent {j + 2}"][z] = f"='{self.solvents[0].name}'!{z}"
+            for cell in cells_with_reference[9:]:
+                self.wb[f"solvent {j + 2}"][cell] = f"='{self.solvents[0].name}'!{cell}"
             self.wb[f"solvent {j + 1}"].title = solvent.name
 
-        for z in cells_with_reference[:9]:
-            self.wb["Analytical Report"][z] = f"='{self.solvents[0].name}'!{z}"
+        for cell in cells_with_reference[:9]:
+            self.wb["Analytical Report"][cell] = f"='{self.solvents[0].name}'!{cell}"
 
         # Remove unused sheets (based on 12 + 1 solvent sheets):
         remaining_sheets = 13 - len(self.solvents)
@@ -102,7 +93,6 @@ class Template:
 
             # Add chart to sheet.
             self.wb[solvent.name].add_chart(chart, "N61")
-
 
     def add_coa_data(self):
 
@@ -169,21 +159,20 @@ class Template:
         for solvent in self.solvents:
             for y, sample in enumerate(self.samples):
                 for z in range(3):
-                    self.solvent_sheets[solvent.name][f"I{105 + z + (y * 6)}"] = sample.__dict__[solvent.name][f"tag-{z + 1}"][0]
-                    self.solvent_sheets[solvent.name][f"I{110 - z + (y * 6)}"] = sample.__dict__[solvent.name][f"tag-S-A{z + 4}"][0]
+                    self.solvent_sheets[solvent.name][f"I{105 + z + (y * 6)}"] = \
+                        sample.__dict__[solvent.name][f"tag-{z + 1}"][0]
+                    self.solvent_sheets[solvent.name][f"I{110 - z + (y * 6)}"] = \
+                        sample.__dict__[solvent.name][f"tag-S-A{z + 4}"][0]
 
         self.feedback.append(f"Data of all {len(self.samples)} samples have been added successfully!")
 
-        Template.feedback = Feedback(
-            ["Success!", "A template has been created", self.feedback]
-        )
+        Template.feedback["title"] = "Success!"
+        Template.feedback["solution"] = "A template has been created"
+        Template.feedback["information"] = self.feedback
+
 
     def save_template(self):
-        self.wb.save(root_dir + "/output_data" + "/HS_Quantification Template (HH v 2.0) (processed).xlsx")
-        # print(f"Template stored in: {Template.temp_output_dir.name}")
+        self.wb.save(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx")
+        print(f"Template stored in: {Template.temp_output_dir.name}")
         Template.constructed = True
-    #     self.collected_messages += "</ul><h1>Template is ready!</h1>"
-    #
-    # def __exit__(self,  exc_type, exc_value, exc_traceback):
-    #     Template.temp_output_dir.cleanup()
-    #     print("all cleaned")
+

@@ -9,7 +9,7 @@ const rightPanelText = document.querySelector('.right_panel_text');
 const feedbackPanel = document.querySelector('.feedback_panel');
 const uploadForm = document.querySelector('#upload_form');
 const feedbackPanelText = document.querySelector('.feedback_text');
-const feedbackPanelTextStatus = document.querySelector('.feedback_text_status')
+const feedbackPanelTitle = document.querySelector('.feedback_title')
 const mockPanel = document.querySelector('#get_template');
 const spinner = document.querySelector('.spinner')
 
@@ -20,24 +20,23 @@ const panelShift = function() {
 };
 
 const feedbackPanelShow = function (feedback) {
+    console.log(feedback)
   let feedbackList = ""
   feedbackPanel.style.transform = "translateX(0px)";
-  feedbackPanelTextStatus.innerHTML = feedback[0] ? "Success!" : feedback[1];
+  feedbackPanelTitle.innerHTML = feedback[1].title;
   feedbackPanel.style.backgroundColor = feedback[0] ? "#78e08f" : "#e55039"
 
-  for (const message of feedback[3]) {
+  for (const message of feedback[1].information) {
     console.log(message);
     feedbackList += `<li>${message}</li>`;
   }
 
-  feedbackPanelText.innerHTML = `<ul><em>${feedback[2]}</em><br><br> ${feedbackList}</ul>`;
+  feedbackPanelText.innerHTML = `<ul><em>${feedback[1].solution}</em><br><br> ${feedbackList}</ul>`;
 };
 
 
-async function getTemplate() {
-    console.log("submitting")
-    mockPanel.submit()
-    spinner.classList.add('hidden');
+async function getTemplate(response) {
+
 }
 
 const pulsatingInput = function() {
@@ -60,23 +59,46 @@ extractDataBtn.addEventListener('click', function(e) {
 
 uploadForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
         fetch(uploadForm.action, {
-        method: 'POST',
-        body: new FormData(uploadForm),
-    }).then((resp) => {
-        return resp.json();
-    }).then((body) => {
-    console.log(body)
-         feedbackPanelShow(body)
-         if (body[0]) {
-            getTemplate()
-         } else {
+            method: 'POST',
+            body: new FormData(uploadForm),
+        }).then((response) => {
+            return response.blob();
+        }).then((response) => {
+            console.log(response)
+            const blob = new Blob([response], {type: 'application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+            console.log(blob)
+            const downloadUrl = URL.createObjectURL(blob);
+            console.log(downloadUrl)
+            const a = document.createElement("a");
+            a.href = downloadUrl;
+            a.download = "HS_Quantification Template (HH v 2.0) (processed).xlsx";
+            document.body.appendChild(a);
+            a.click();
             spinner.classList.add('hidden');
-         }
-    }).catch((error) => {
-       console.error(error)
-    });
+            const test = {
+                title: "test",
+                solution: "aap"
+            };
+//            feedbackPanelShow(test)
+//            if (response[0]) {
+//                getTemplate(response)
+//            } else {
+//
+//                spinner.classList.add('hidden')
+//            }
+            }).catch((error) => {
+               console.error(error)
+            });
 });
+
+    //  feedbackPanelShow(body)
+      //   if (body[0]) {
+       //     getTemplate()
+       //  } else {
+        //    spinner.classList.add('hidden');
+        // }
 
 
 window.setTimeout(panelShift, 500);
