@@ -6,19 +6,19 @@
     <h3><em>J. M. Koelewijn v 2.0</em></h3>
 </div>
 
-<div class="left_panel">
-    <div class="left_panel_text">
+<div class="title_panel">
+    <div class="title_panel_text">
 
         <h1 style="float: right;">Headspace Helper</h1>
 
-        <ul class="left_panel_list">
+        <ul class="title_panel_list">
             <li>Upload all your data <span style="color: #48dbfb;">.txt</span> and CoA <span style="color: #48dbfb;">.pdf</span>
                 files.
             </li>
             <li>Click <span style="color: #48dbfb;">Extract data</span>.</li>
             <li>Receive a <span style="color: #48dbfb;">Template</span> spreadsheet!</li>
         </ul>
-        <object class="left_panel_logo" data="{{ url_for('static', path='/icons/erlenmeyer.svg') }}" width="125"
+        <object class="title_panel_logo" data="{{ url_for('static', path='/icons/erlenmeyer.svg') }}" width="125"
                 height="125"></object>
 
     </div>
@@ -28,39 +28,43 @@
 
     <ul class="left_reminder_list">
         <strong>General:</strong>
-        <li>Best practice is to store all Headspace output <span style="color: #48dbfb;">.txt</span> files and CoA <span
-                style="color: #48dbfb;">.pdf</span> files in the same diproma folder.
+        <li>Best practice is to store all Headspace output <span style="color: #48dbfb;">.txt</span> files and solvent CoA <span
+                style="color: #48dbfb;">.pdf</span> files in the same diproma folder and upload all files at once.
         </li>
         <br>
         <strong>CoA (pdf) files:</strong>
         <li>Upload up to <span style="color: #48dbfb;">12</span> CoA files.</li>
-        <li>Use standardized format for all CoA files:<br>
-            "<span style="color: #48dbfb;">SolventName Manufacturer Catalog# Lot# ExpirationDate(mmmYYYY) purity(00.00%).pdf</span>".
-        </li>
-        <li>Example of correct CoA file:<br>
-            "<span style="color: #48dbfb;">EtOH Fisher E0650DF15 2034615 Feb2025 99.99%.pdf</span>".
-        </li>
-        <li>Solvent name used for the Headspace measurement should match with the CoA file!</li>
+        <li>Solvent name used for the Headspace measurement should match with the CoA file.</li>
         <li>For diluent use abbreviation: <span style="color: #48dbfb;">NMP</span>, <span
-                style="color: #48dbfb;">DMAC</span> or <span style="color: #48dbfb;">DMI</span>.
+                style="color: #48dbfb;">DMA</span> or <span style="color: #48dbfb;">DMI</span>.
         </li>
         <li><span style="color: #48dbfb;">Heptanes</span> is not supported <span
                 style="color: #48dbfb;">n-heptane</span> is.
         </li>
+        <li>Use standardized format for all CoA files:<br>
+            "<span style="color: #48dbfb;">SolventName Manufacturer Catalog# Lot# ExpirationDate(mmmYYYY) purity(00.00%).pdf</span>".
+        </li>
+        <br>
+        <li>Example of correct CoA file:<br>
+            "<span style="color: #48dbfb;">Ethanol Fisher E0650DF15 2034615 Feb2025 99.99%.pdf</span>".
+        </li>
+
         <br>
         <strong>Data (txt) files:</strong>
         <li>Upload up to <span style="color: #48dbfb;">12</span> A-files</li>
         <li>Upload up to <span style="color: #48dbfb;">8</span> B-files.</li>
         <li>Upload up to <span style="color: #48dbfb;">5</span> sample files.</li>
+        <br>
         <li>Examples of correct sample formats:</li>
         <ul style="list-style-type: none;">
-            <li><span style="color: #48dbfb;">XYZ12345-#-#-1_<em>rest</em></span></li>
-            <li><span style="color: #48dbfb;">XYZ12345678-#-#-1_<em>rest</em></span></li>
+            <li><span style="color: #48dbfb;">XYZ12345-#-#-1</span><em>_rest</em></li>
+            <li><span style="color: #48dbfb;">XYZ12345678-#-#-1</span><em>_rest</em></li>
         </ul>
+        <br>
         <li>Examples of correct spiked sample formats:</li>
         <ul style="list-style-type: none;">
-            <li><span style="color: #48dbfb;">XYZ12345-#-#-S-A1_<em>rest</em></span></li>
-            <li><span style="color: #48dbfb;">XYZ12345678-#-#-S-A1_<em>rest</em></span></li>
+            <li><span style="color: #48dbfb;">XYZ12345-#-#-S-A1</span><em>_rest</em></li>
+            <li><span style="color: #48dbfb;">XYZ12345678-#-#-S-A1</span><em>_rest</em></li>
         </ul>
         <br>
 
@@ -75,9 +79,9 @@
     </div>
     <form action="/upload_files" id="upload_form" method="post" enctype="multipart/form-data">
         <div style="margin-bottom: 65px; margin-left: 10px" class="input-group extract_data">
-            <input type="file" name="files" class="form-control js--extract_data pulse_" id="inputGroupFile04"
+            <input type="file" name="files" class="form-control js--extract_data pulse" id="inputGroupFile04"
                    aria-describedby="inputGroupFileAddon04" aria-label="Upload" multiple>
-            <button style="color: #48dbfb;" class="btn btn-outline-secondary js--extract_data_btn hidden2" type="submit"
+            <button style="color: #48dbfb;" class="btn btn-outline-secondary js--extract_data_btn extract_btn_hidden" type="submit"
                     id="inputGroupFileAddon04">Extract data
             </button>
         </div>
@@ -85,9 +89,6 @@
     <object class="right_panel_logo" data="{{ url_for('static', path='/icons/files.svg') }}" width="125"
             height="125"></object>
 </div>
-
-<!--<form class="hidden" action="/get_template" id="get_template" method="post">-->
-<!--</form>-->
 
 <div class="feedback_panel">
     <div>

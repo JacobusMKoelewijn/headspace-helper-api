@@ -1,4 +1,4 @@
-import warnings
+# import warnings
 import os
 import openpyxl
 from openpyxl.chart import ScatterChart, Reference, Series
@@ -13,19 +13,16 @@ from . import cells_with_reference
 from .data import Solvent, Diluent, Sample
 import tempfile
 
-warnings.simplefilter("ignore")
+# warnings.simplefilter("ignore")
 
 
 class Template:
     constructed = False
-    # feedback = {}
     temp_output_dir = tempfile.TemporaryDirectory()
-    print(f"current output dir: {temp_output_dir}")
 
     def __init__(self, solvents, samples, diluent):
         self.wb = openpyxl.load_workbook(root_dir + "/template_file/HS_Quantification Template (HH v 2.0).xlsx")
         self.solvent_sheets = None
-        # self.feedback = []
         self.solvents = solvents
         self.samples = samples
         self.diluent = diluent
@@ -102,9 +99,8 @@ class Template:
             self.solvent_sheets[self.solvents[0].name]["B22"] = self.diluent.manufacturer
             self.solvent_sheets[self.solvents[0].name]["C22"] = self.diluent.catalog_number
             self.solvent_sheets[self.solvents[0].name]["D22"] = self.diluent.lot_number
-        except:
-            pass
-            # self.feedback.append(f"CoA of diluent not provided.")
+        except Exception as e:
+            print(e)
 
         # Add CoA for 2. Reference standards:
         for solvent in self.solvents:
@@ -114,8 +110,6 @@ class Template:
             self.solvent_sheets[solvent.name]["D27"] = solvent.lot_number
             self.solvent_sheets[solvent.name]["F27"] = solvent.expiration_date
             self.solvent_sheets[solvent.name]["E27"] = solvent.purity
-
-        # self.feedback.append(f"Found {len(self.solvents)} solvents.")
 
     def add_area_height_data_a(self):
 
@@ -129,8 +123,6 @@ class Template:
             for j in range(4):
                 self.solvent_sheets[solvent.name][f"F{66 + j}"] = getattr(solvent, "a" + f"{4 - j}")[0]
 
-        # self.feedback.append(f"Data of all A-files have been added successfully!")
-
     def add_area_height_data_b(self):
 
         for solvent in self.solvents:
@@ -140,17 +132,15 @@ class Template:
                 for j in range(3):
                     self.solvent_sheets[solvent.name][f"G{84 + j}"] = getattr(solvent, "b3_" + f"{j + 1}")[2]
                     self.solvent_sheets[solvent.name][f"H{84 + j}"] = getattr(solvent, "b3_" + f"{j + 1}")[0]
-            except:
+            except Exception as e:
                 pass
 
             # # Add peak area for 8. Data for bracketing control:
             try:
                 for j in range(5):
                     self.solvent_sheets[solvent.name][f"G{95 + j}"] = getattr(solvent, "b3_" + f"{j + 4}")[0]
-            except:
-                pass
-
-        # self.feedback.append(f"Data of all B-files have been added successfully!")
+            except Exception as e:
+                print(e)
 
     def add_sample_data(self):
 
@@ -165,15 +155,6 @@ class Template:
                     self.solvent_sheets[solvent.name][f"I{110 - z + (y * 6)}"] = \
                         sample.__dict__[solvent.name][f"tag-S-A{z + 4}"][0]
 
-        # self.feedback.append(f"Data of all {len(self.samples)} samples have been added successfully!")
-
-        # Template.feedback["title"] = "Success!"
-        # Template.feedback["solution"] = "A template has been created"
-        # Template.feedback["information"] = self.feedback
-
-
     def save_template(self):
         self.wb.save(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx")
-        print(f"Template stored in: {Template.temp_output_dir.name}")
         Template.constructed = True
-
