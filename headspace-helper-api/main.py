@@ -201,6 +201,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
     Template(solvents, samples, diluent)
 
     if Template.constructed:
+        print(f"Template found in: {Template.temp_output_dir.name}")
         return FileResponse(Template.temp_output_dir.name + "/HS_Quantification Template (HH v 2.0) (processed).xlsx", filename="HS_Quantification Template (HH v 2.0) (processed).xlsx")
 
 
