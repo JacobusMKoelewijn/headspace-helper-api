@@ -1,6 +1,18 @@
 import os
+import logging
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+def create_logger(name):
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler(root_dir + '/headspace-helper-api.log')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    return logger
+
 
 # The specified cells are referenced to sheet "solvent 1" and need to be programmatically added to every solvent sheet.
 cells_with_reference = [
@@ -9,10 +21,13 @@ cells_with_reference = [
     "A22", "B22", "C22", "D22",  # 1. Diluent
     "A38", "B38", "C38", "D38",  # 4. Diluted stock solution
     "A43", "A44", "A45", "A46", "A47", "A48", "A49", "A50", "A51", "A52", "A53", "A54",  # 5. Blanks
-    "A62", "A63", "A64", "A65", "A66", "A67", "A68", "A69", "A70", "A71", "A72", "A73",  # 6. Calibration curve - Standard name
+    "A62", "A63", "A64", "A65", "A66", "A67", "A68", "A69", "A70", "A71", "A72", "A73",
+    # 6. Calibration curve - Standard name
     "B62", "B63", "B64", "B65", "B66", "B67", "B68", "B69", "B70", "B71", "B72", "B73",  # 6. Calibration curve - V (uL)
-    "C62", "C63", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "C72", "C73",  # 6. Calibration curve - From Stock
-    "D62", "D63", "D64", "D65", "D66", "D67", "D68", "D69", "D70", "D71", "D72", "D73",  # 6. Calibration curve - V added (mL)
+    "C62", "C63", "C64", "C65", "C66", "C67", "C68", "C69", "C70", "C71", "C72", "C73",
+    # 6. Calibration curve - From Stock
+    "D62", "D63", "D64", "D65", "D66", "D67", "D68", "D69", "D70", "D71", "D72", "D73",
+    # 6. Calibration curve - V added (mL)
     "B78",  # Noise
     "A84", "B84", "C84", "D84",  # Repeatability and control
     "A95", "A96", "A97", "A98", "A99",  # Bracketing control - Control name

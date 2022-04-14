@@ -10,10 +10,10 @@ from openpyxl.drawing.line import LineProperties
 from openpyxl.drawing.text import Paragraph, ParagraphProperties, CharacterProperties, Font
 from . import root_dir
 from . import cells_with_reference
-from .data import Solvent, Diluent, Sample
 import tempfile
+from . import create_logger
 
-# warnings.simplefilter("ignore")
+log = create_logger(__name__)
 
 
 class Template:
@@ -100,7 +100,7 @@ class Template:
             self.solvent_sheets[self.solvents[0].name]["C22"] = self.diluent.catalog_number
             self.solvent_sheets[self.solvents[0].name]["D22"] = self.diluent.lot_number
         except Exception as e:
-            print(e)
+            log.info(e)
 
         # Add CoA for 2. Reference standards:
         for solvent in self.solvents:
@@ -133,14 +133,14 @@ class Template:
                     self.solvent_sheets[solvent.name][f"G{84 + j}"] = getattr(solvent, "b3_" + f"{j + 1}")[2]
                     self.solvent_sheets[solvent.name][f"H{84 + j}"] = getattr(solvent, "b3_" + f"{j + 1}")[0]
             except Exception as e:
-                pass
+                log.info(e)
 
             # # Add peak area for 8. Data for bracketing control:
             try:
                 for j in range(5):
                     self.solvent_sheets[solvent.name][f"G{95 + j}"] = getattr(solvent, "b3_" + f"{j + 4}")[0]
             except Exception as e:
-                print(e)
+                log.info(e)
 
     def add_sample_data(self):
 

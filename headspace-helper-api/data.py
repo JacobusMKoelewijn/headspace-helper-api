@@ -1,8 +1,3 @@
-import glob
-import os
-import re
-
-
 class Sample:
     """
     Class to store tag attributes for every unique sample and every solvent.

@@ -1,22 +1,26 @@
 'use strict';
 
+// Panels
 const titlePanel = document.querySelector('.title_panel');
-const rightPanel = document.querySelector('.right_panel');
-const leftReminder = document.querySelector('.left_reminder');
+const uploadPanel = document.querySelector('.upload_panel');
+const uploadPanelText = document.querySelector('.upload_panel_text');
+const informationPanel = document.querySelector('.information_panel');
+const feedbackPanel = document.querySelector('.feedback_panel');
+const feedbackPanelTitle = document.querySelector('.feedback_panel_title');
+const feedbackPanelText = document.querySelector('.feedback_panel_text');
+
+// Form
 const extractData = document.querySelector('.js--extract_data');
 const extractDataBtn = document.querySelector('.js--extract_data_btn');
-const rightPanelText = document.querySelector('.right_panel_text');
-const feedbackPanel = document.querySelector('.feedback_panel');
 const uploadForm = document.querySelector('#upload_form');
-const feedbackPanelText = document.querySelector('.feedback_text');
-const feedbackPanelTitle = document.querySelector('.feedback_title');
-const mockPanel = document.querySelector('#get_template');
+
+// Spinner
 const spinner = document.querySelector('.spinner');
 
 const panelShift = function () {
     titlePanel.style.transform = 'translateX(0px)';
-    rightPanel.style.transform = 'translateX(0px)';
-    leftReminder.style.transform = 'translateX(0px)';
+    uploadPanel.style.transform = 'translateX(0px)';
+    informationPanel.style.transform = 'translateX(0px)';
 };
 
 const feedbackPanelShow = function (feedback) {
@@ -34,10 +38,12 @@ const feedbackPanelShow = function (feedback) {
     }
     finally {
         feedbackPanelText.innerHTML = `<ul><em>${feedback.solution}</em><br><br> ${feedbackList}</ul>`;
-        extractDataBtn.classList.remove('pulse');
+
 
         uploadForm.reset();
         extractDataBtn.classList.add('extract_btn_hidden');
+        uploadPanelText.innerHTML =
+            '<h2 class="upload_panel_text" style="margin-left: 10px; margin-top: 10px;">Upload all <span style="color: #48dbfb;">.txt</span> and <span style="color: #48dbfb;">.pdf</span> files.</h2>';
     }
 };
 
@@ -51,7 +57,7 @@ const feedbackPanelHide = function () {
 //    feedbackPanel.style.backgroundColor = '#78e08f';
 //};
 
-async function getTemplate(response) {}
+//async function getTemplate(response) {}
 
 const pulsatingInput = function () {
     extractData.style.backgroundColor = '#48dbfb';
@@ -62,7 +68,7 @@ extractData.addEventListener('input', function (e) {
         extractDataBtn.classList.remove('extract_btn_hidden');
         extractData.classList.remove('pulse');
         extractDataBtn.classList.add('pulse');
-        rightPanelText.innerHTML =
+        uploadPanelText.innerHTML =
             "Click  <span style='color: #48dbfb;'>Extract data</span>.";
     }
 });
@@ -73,6 +79,7 @@ extractDataBtn.addEventListener('click', function (e) {
 
 extractDataBtn.addEventListener('click', function (e) {
     spinner.classList.remove('hidden');
+    extractDataBtn.classList.remove('pulse');
 });
 
 uploadForm.addEventListener('submit', e => {

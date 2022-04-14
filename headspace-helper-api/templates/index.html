@@ -2,34 +2,26 @@
 
 {% block content %}
 
-<div class="author">
-    <h3><em>J. M. Koelewijn v 2.0</em></h3>
-</div>
-
 <div class="title_panel">
     <div class="title_panel_text">
-
         <h1 style="float: right;">Headspace Helper</h1>
-
-        <ul class="title_panel_list">
+        <ul style="color: white;">
             <li>Upload all your data <span style="color: #48dbfb;">.txt</span> and CoA <span style="color: #48dbfb;">.pdf</span>
                 files.
             </li>
             <li>Click <span style="color: #48dbfb;">Extract data</span>.</li>
             <li>Receive a <span style="color: #48dbfb;">Template</span> spreadsheet!</li>
         </ul>
-        <object class="title_panel_logo" data="{{ url_for('static', path='/icons/erlenmeyer.svg') }}" width="125"
+        <object class="title_panel_icon" data="{{ url_for('static', path='/icons/erlenmeyer.svg') }}" width="125"
                 height="125"></object>
-
     </div>
 </div>
 
-<div class="left_reminder">
-
-    <ul class="left_reminder_list">
+<div class="information_panel">
+    <ul class="information_panel_text">
         <strong>General:</strong>
-        <li>Best practice is to store all Headspace output <span style="color: #48dbfb;">.txt</span> files and solvent CoA <span
-                style="color: #48dbfb;">.pdf</span> files in the same diproma folder and upload all files at once.
+        <li>Best practice is to store all Headspace output <span style="color: #48dbfb;">.txt</span> files and solvent
+            CoA <span style="color: #48dbfb;">.pdf</span> files in the same diproma folder and upload all files at once.
         </li>
         <br>
         <strong>CoA (pdf) files:</strong>
@@ -48,7 +40,6 @@
         <li>Example of correct CoA file:<br>
             "<span style="color: #48dbfb;">Ethanol Fisher E0650DF15 2034615 Feb2025 99.99%.pdf</span>".
         </li>
-
         <br>
         <strong>Data (txt) files:</strong>
         <li>Upload up to <span style="color: #48dbfb;">12</span> A-files</li>
@@ -67,37 +58,41 @@
             <li><span style="color: #48dbfb;">XYZ12345678-#-#-S-A1</span><em>_rest</em></li>
         </ul>
         <br>
-
     </ul>
-
 </div>
 
-<div class="right_panel">
+<div class="upload_panel">
     <div>
-        <h2 class="right_panel_text" style="margin-left: 10px; margin-top: 10px;">Upload all <span
+        <h2 class="upload_panel_text" style="margin-left: 10px; margin-top: 10px;">Upload all <span
                 style="color: #48dbfb;">.txt</span> and <span style="color: #48dbfb;">.pdf</span> files.</h2>
     </div>
     <form action="/upload_files" id="upload_form" method="post" enctype="multipart/form-data">
         <div style="margin-bottom: 65px; margin-left: 10px" class="input-group extract_data">
             <input type="file" name="files" class="form-control js--extract_data pulse" id="inputGroupFile04"
                    aria-describedby="inputGroupFileAddon04" aria-label="Upload" multiple>
-            <button style="color: #48dbfb;" class="btn btn-outline-secondary js--extract_data_btn extract_btn_hidden" type="submit"
+            <button style="color: #48dbfb;" class="btn btn-outline-secondary js--extract_data_btn extract_btn_hidden"
+                    type="submit"
                     id="inputGroupFileAddon04">Extract data
             </button>
         </div>
     </form>
-    <object class="right_panel_logo" data="{{ url_for('static', path='/icons/files.svg') }}" width="125"
+    <object class="upload_panel_icon" data="{{ url_for('static', path='/icons/files.svg') }}" width="125"
             height="125"></object>
 </div>
 
 <div class="feedback_panel">
     <div>
-        <h2 class="feedback_title" style="margin-left: 35px; margin-top: 10px;"></h2>
-        <h3 class="feedback_text"></h3>
+        <h2 class="feedback_panel_title" style="margin-left: 35px; margin-top: 10px;"></h2>
+        <h3 class="feedback_panel_text"></h3>
     </div>
 </div>
 
-<div class="lds-ring spinner hidden"><div></div><div></div><div></div><div></div></div>
+<div class="lds-ring spinner hidden">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
 
 {% endblock %}
 

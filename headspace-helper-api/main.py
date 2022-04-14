@@ -4,18 +4,17 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import shutil
 from typing import List
-from . import root_dir
 from .data import Solvent, Diluent, Sample
-from .template import Template
+from .create_template import Template
 import glob
 import os
-import tempfile
 from tempfile import TemporaryDirectory
 import re
-import json
+from . import create_logger
+
+log = create_logger(__name__)
 
 app = FastAPI()
-
 app.mount("/static", StaticFiles(directory="headspace-helper-api/static"), name="static")
 templates = Jinja2Templates(directory="headspace-helper-api/templates")
 
@@ -62,7 +61,7 @@ def check_file_requirements(txt_files, coa_files):
                 feedback.update({"all_files_correct": True})
 
     except Exception as e:
-        feedback.update({"problem": e})
+        log.info(e)
 
     finally:
         return feedback
@@ -123,7 +122,11 @@ async def index(request: Request):
 
 @app.post("/upload_files")
 async def upload_files(files: List[UploadFile] = File(...)):
+    log.info("Attempt to create a template.")
+
     with TemporaryDirectory() as temp_dir:
+        log.info(f"Temporary directory:{temp_dir}.")
+
         # Make a copy of each uploaded file in a temporary directory.
         for file in files:
             with open(temp_dir + '/' + file.filename, 'wb') as temp_file:
