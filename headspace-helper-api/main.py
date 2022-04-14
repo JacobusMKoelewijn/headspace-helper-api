@@ -4,19 +4,36 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import shutil
 from typing import List
-from .data import Solvent, Diluent, Sample
+from .data_classes import Solvent, Diluent, Sample
 from .create_template import Template
 import glob
 import os
 from tempfile import TemporaryDirectory
 import re
 from . import create_logger
+from . import root_dir
 
 log = create_logger(__name__)
 
-app = FastAPI()
+app = FastAPI(root_path="/headspace-helper")
+# app = FastAPI()
+
 app.mount("/static", StaticFiles(directory="headspace-helper-api/static"), name="static")
 templates = Jinja2Templates(directory="headspace-helper-api/templates")
+
+
+# Work around
+def https_url_for(request: Request, name: str, **path_params: str) -> str:
+    http_url = request.url_for(name, **path_params)
+    print(f"########### {path_params}")
+    print(f"########### {request}")
+    print(f"########### {http_url}")
+
+    # Replace 'http' with 'https'
+    return http_url.replace("http", "https", 1)
+
+
+templates.env.globals["https_url_for"] = https_url_for
 
 
 def check_file_requirements(txt_files, coa_files):
@@ -136,7 +153,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
         txt_files = [os.path.basename(file) for file in glob.glob(temp_dir + "/" + "*.txt")]
         coa_files = [os.path.basename(file) for file in glob.glob(temp_dir + "/" + "*.pdf")]
 
-        # Check if all files meet requirements.
+        # Check if all files meet requirements. If not return feedback to js.
         feedback = check_file_requirements(txt_files, coa_files)
 
         if not feedback['all_files_correct']:

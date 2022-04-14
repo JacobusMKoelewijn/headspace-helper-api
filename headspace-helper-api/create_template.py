@@ -1,5 +1,3 @@
-# import warnings
-import os
 import openpyxl
 from openpyxl.chart import ScatterChart, Reference, Series
 from openpyxl.chart.trendline import Trendline, TrendlineLabel
@@ -21,7 +19,7 @@ class Template:
     temp_output_dir = tempfile.TemporaryDirectory()
 
     def __init__(self, solvents, samples, diluent):
-        self.wb = openpyxl.load_workbook(root_dir + "/template_file/HS_Quantification Template (HH v 2.0).xlsx")
+        self.wb = openpyxl.load_workbook(root_dir + "/empty_excel_template/HS_Quantification Template (HH v 2.0).xlsx")
         self.solvent_sheets = None
         self.solvents = solvents
         self.samples = samples

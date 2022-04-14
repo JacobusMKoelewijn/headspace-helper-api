@@ -51,13 +51,6 @@ const feedbackPanelHide = function () {
     feedbackPanel.style.transform = 'translateX(1000px)';
 };
 
-//const successPanel = function () {
-//    feedbackPanel.style.transform = 'translateX(0px)';
-//    feedbackPanelTitle.innerHTML = 'Success!';
-//    feedbackPanel.style.backgroundColor = '#78e08f';
-//};
-
-//async function getTemplate(response) {}
 
 const pulsatingInput = function () {
     extractData.style.backgroundColor = '#48dbfb';
