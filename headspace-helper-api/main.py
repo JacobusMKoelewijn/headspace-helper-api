@@ -11,25 +11,25 @@ import os
 from tempfile import TemporaryDirectory
 import re
 from . import create_logger
-from . import root_dir
+from .config import IN_PRODUCTION, VERSION
 
 log = create_logger(__name__)
 
-app = FastAPI(root_path="/headspace-helper")
-# app = FastAPI()
+if IN_PRODUCTION:
+    app = FastAPI(root_path="/headspace-helper")
+else:
+    app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="headspace-helper-api/static"), name="static")
 templates = Jinja2Templates(directory="headspace-helper-api/templates")
 
 
-# Work around
 def https_url_for(request: Request, name: str, **path_params: str) -> str:
+    """
+    Modifies Jinja2 url_for function to https_url_for and returns url as https.
+    """
     http_url = request.url_for(name, **path_params)
-    print(f"########### {path_params}")
-    print(f"########### {request}")
-    print(f"########### {http_url}")
 
-    # Replace 'http' with 'https'
     return http_url.replace("http", "https", 1)
 
 
@@ -134,7 +134,7 @@ def find_solvent_data(solvent_name, file_type, temp_dir):
 
 @app.get("/")
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "in_production": IN_PRODUCTION, "version": VERSION})
 
 
 @app.post("/upload_files")
@@ -175,7 +175,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 diluent = Diluent(solvent_coa_data)
             else:
                 a_file_data = {
-                    f'a{i + 1}': find_solvent_data(solvent_name, "A" + f"{i + 1}", temp_dir) for i in range(12)}
+                    f'a{i + 1}': find_solvent_data(solvent_name, "A" + f"{i + 1}", temp_dir) for i in range(8)}
 
                 b_file_data = {
                     f'b3_{i + 1}': find_solvent_data(solvent_name, "B3." + f"{i + 1}", temp_dir) for i in range(8)}

@@ -1,5 +1,3 @@
-{% set version = '1.5.4' %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,17 +10,36 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    {% if in_production %}
     <link href="{{ https_url_for(request, 'static', path='/css/gui_style.css') }}" rel="stylesheet">
+    {% else %}
+    <link href="{{ url_for('static', path='/css/gui_style.css') }}" rel="stylesheet">
+    {% endif %}
     <title>Headspace Helper API</title>
 </head>
+
+{% if in_production %}
 <body style="background-image: url('{{ https_url_for(request, 'static', path='/icons/viinum_logo_ring.svg') }}')">
+{% else %}
+<body style="background-image: url('{{ url_for('static', path='/icons/viinum_logo_ring.svg') }}')">
+{% endif %}
 
 {% block content %} {% endblock %}
 
 <div class="author">
-    <h3><em>J. M. Koelewijn v {{ version }}</em></h3>
+    {% if in_production %}
+    <h3><em><span style="color: #48dbfb;">J. M. Koelewijn</span> v {{ version }}</em></h3>
+    {% else %}
+    <h3><em><strong>(Development mode) </strong></h3></em>
+    <h3><span style="color: #48dbfb;">J. M. Koelewijn</span> v {{ version }}</em></h3>
+    {% endif %}
 </div>
 
+{% if in_production %}
 <script src="{{ https_url_for(request, 'static', path='/js/gui_control.js') }}"></script>
+{% else %}
+<script src="{{ url_for('static', path='/js/gui_control.js') }}"></script>
+{% endif %}
+
 </body>
 </html>

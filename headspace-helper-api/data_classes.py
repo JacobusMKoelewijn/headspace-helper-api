@@ -38,4 +38,3 @@ class Solvent(Diluent):
 
         for key, val in b_file_data.items():
             self.__dict__[key] = val
-

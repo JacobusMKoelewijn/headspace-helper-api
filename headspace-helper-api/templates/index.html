@@ -12,8 +12,14 @@
             <li>Click <span style="color: #48dbfb;">Extract data</span>.</li>
             <li>Receive a <span style="color: #48dbfb;">Template</span> spreadsheet!</li>
         </ul>
+        {% if in_production %}
         <object class="title_panel_icon" data="{{ https_url_for(request, 'static', path='/icons/erlenmeyer.svg') }}" width="125"
                 height="125"></object>
+        {% else %}
+        <object class="title_panel_icon" data="{{ url_for('static', path='/icons/erlenmeyer.svg') }}" width="125"
+                height="125"></object>
+        {% endif %}
+
     </div>
 </div>
 
@@ -42,7 +48,7 @@
         </li>
         <br>
         <strong>Data (txt) files:</strong>
-        <li>Upload up to <span style="color: #48dbfb;">12</span> A-files</li>
+        <li>Upload up to <span style="color: #48dbfb;">8</span> A-files</li>
         <li>Upload up to <span style="color: #48dbfb;">8</span> B-files.</li>
         <li>Upload up to <span style="color: #48dbfb;">5</span> sample files.</li>
         <br>
@@ -66,7 +72,11 @@
         <h2 class="upload_panel_text" style="margin-left: 10px; margin-top: 10px;">Upload all <span
                 style="color: #48dbfb;">.txt</span> and <span style="color: #48dbfb;">.pdf</span> files.</h2>
     </div>
+    {% if in_production %}
     <form action="{{ https_url_for(request, 'upload_files') }}" id="upload_form" method="post" enctype="multipart/form-data">
+    {% else %}
+    <form action="{{ url_for('upload_files') }}" id="upload_form" method="post" enctype="multipart/form-data">
+    {% endif %}
         <div style="margin-bottom: 65px; margin-left: 10px" class="input-group extract_data">
             <input type="file" name="files" class="form-control js--extract_data pulse" id="inputGroupFile04"
                    aria-describedby="inputGroupFileAddon04" aria-label="Upload" multiple>
@@ -76,8 +86,13 @@
             </button>
         </div>
     </form>
+    {% if in_production %}
     <object class="upload_panel_icon" data="{{ https_url_for(request, 'static', path='/icons/files.svg') }}" width="125"
             height="125"></object>
+    {% else %}
+    <object class="upload_panel_icon" data="{{ url_for('static', path='/icons/files.svg') }}" width="125"
+            height="125"></object>
+    {% endif %}
 </div>
 
 <div class="feedback_panel">
