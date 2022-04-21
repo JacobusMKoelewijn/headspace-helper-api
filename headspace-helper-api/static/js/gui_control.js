@@ -26,6 +26,7 @@ const panelShift = function () {
 const feedbackPanelShow = function (feedback) {
     let feedbackList = '';
     feedbackPanel.style.transform = 'translateX(0px)';
+    uploadPanel.style.transform = 'translateX(0px)';
     feedbackPanel.style.backgroundColor = feedback.all_files_correct ? '#78e08f' : '#e55039';
     feedbackPanelTitle.innerHTML = feedback.problem;
 
@@ -42,6 +43,7 @@ const feedbackPanelShow = function (feedback) {
 
         uploadForm.reset();
         extractDataBtn.classList.add('extract_btn_hidden');
+        extractData.classList.add('pulse');
         uploadPanelText.innerHTML =
             '<h2 class="upload_panel_text" style="margin-left: 10px; margin-top: 10px;">Upload all <span style="color: #48dbfb;">.txt</span> and <span style="color: #48dbfb;">.pdf</span> files.</h2>';
     }
@@ -49,6 +51,7 @@ const feedbackPanelShow = function (feedback) {
 
 const feedbackPanelHide = function () {
     feedbackPanel.style.transform = 'translateX(1000px)';
+    uploadPanel.style.transform = 'translateX(1000px)';
 };
 
 
