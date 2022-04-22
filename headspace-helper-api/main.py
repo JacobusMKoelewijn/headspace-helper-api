@@ -28,6 +28,7 @@ def https_url_for(request: Request, name: str, **path_params: str) -> str:
     """
     Modifies Jinja2 url_for function to https_url_for and returns url as https.
     """
+
     http_url = request.url_for(name, **path_params)
 
     return http_url.replace("http", "https", 1)
