@@ -1,3 +1,27 @@
+class Files:
+    """
+
+    """
+    pass
+
+
+class AFile:
+    _regex_a_file = "(^A[1-8]_)"
+
+    def __init__(self, file_name):
+        self.file_name = file_name
+
+        print(self.file_name)
+
+
+class BFile:
+    pass
+
+
+class SampleFile:
+    pass
+
+
 class Sample:
     """
     Class to store tag attributes for every unique sample and every solvent.

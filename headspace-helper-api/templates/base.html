@@ -1,16 +1,13 @@
+{#
+The switch_url macro calls either the https_url_for() or url_for() function
+depending on operating in production mode or development mode respectively.
+#}
+
 {% macro switch_url(name, path='') -%}
-    {% if in_production %}
-        {% if name == 'static' %}
-            {{ https_url_for(request, name=name, path=path) }}
-        {% else %}
-            {{ https_url_for(request, name=name) }}
-        {% endif %}
-    {% else %}
-        {% if name == 'static' %}
-            {{ url_for(name=name, path=path) }}
-        {% else %}
-            {{ url_for(name=name) }}
-        {% endif %}
+    {% if name == 'static' %}
+        {{ https_url_for(request, name=name, path=path) if in_production else url_for(name=name, path=path) }}
+    {% elif name == 'upload_files'  %}
+        {{ https_url_for(request, name=name) if in_production else url_for(name=name) }}
     {% endif %}
 {%- endmacro %}
 

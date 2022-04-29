@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import shutil
 from typing import List
-from .data_classes import Solvent, Diluent, Sample
+from .data_classes import Solvent, Diluent, Sample, Files, AFile
 from .create_template import Template
 import glob
 import os
@@ -26,7 +26,7 @@ templates = Jinja2Templates(directory="headspace-helper-api/templates")
 
 def https_url_for(request: Request, name: str, **path_params: str) -> str:
     """
-    Modifies Jinja2 url_for function to https_url_for and returns url as https.
+    Modifies Jinja2 url_for() function to https_url_for() and returns url as https.
     """
 
     http_url = request.url_for(name, **path_params)
@@ -49,40 +49,35 @@ def check_file_requirements(txt_files, coa_files):
     regex_a_file = "(^A[1-8]_)"
     regex_b_file = "(^B3.[1-8]_)"
 
-    try:
-        if not coa_files:
-            feedback.update({"problem": "No CoA files provided.",
-                             "solution": "Please upload a CoA .pdf file for each solvent."})
+    if not coa_files:
+        feedback.update({"problem": "No CoA files provided.",
+                         "solution": "Please upload a CoA .pdf file for each solvent."})
 
-        elif len(coa_files) > 12:
-            feedback.update({"problem": "More then 12 CoA files detected!",
-                             "solution": "Please upload no more then 12 solvent CoA .pdf files."})
+    elif len(coa_files) > 12:
+        feedback.update({"problem": "More then 12 CoA files detected!",
+                         "solution": "Please upload no more then 12 solvent CoA .pdf files."})
 
-        elif len(get_unique_samples(txt_files)) > 5:
-            feedback.update({"problem": "More then 5 samples detected!",
-                             "solution": "Please upload no more then 5 sample measurements."})
+    elif len(get_unique_samples(txt_files)) > 5:
+        feedback.update({"problem": "More then 5 samples detected!",
+                         "solution": "Please upload no more then 5 sample measurements."})
+    else:
+        for file in txt_files:
+            correct_format = re.search(regex_sample_file + "|" + regex_a_file + "|" + regex_b_file, file)
+            if not correct_format:
+                incorrect_files.append(file)
+
+        for file in coa_files:
+            if not len(file.split()) == 6:
+                incorrect_files.append(file)
+
+        if incorrect_files:
+            feedback.update({"problem": "Incorrect file format!",
+                             "solution": "Please correct the following file names:.",
+                             "information": incorrect_files})
         else:
-            for file in txt_files:
-                correct_format = re.search(regex_sample_file + "|" + regex_a_file + "|" + regex_b_file, file)
-                if not correct_format:
-                    incorrect_files.append(file)
+            feedback.update({"all_files_correct": True})
 
-            for file in coa_files:
-                if not len(file.split()) == 6:
-                    incorrect_files.append(file)
-
-            if incorrect_files:
-                feedback.update({"problem": "Incorrect file format!",
-                                 "solution": "Please correct the following file names:.",
-                                 "information": incorrect_files})
-            else:
-                feedback.update({"all_files_correct": True})
-
-    except Exception as e:
-        log.info(e)
-
-    finally:
-        return feedback
+    return feedback
 
 
 def get_unique_samples(txt_files):
@@ -134,16 +129,17 @@ def find_solvent_data(solvent_name, file_type, temp_dir):
 
 
 @app.get("/")
-async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "in_production": IN_PRODUCTION, "version": VERSION})
+def index(request: Request):
+    return templates.TemplateResponse("index.html",
+                                      {"request": request, "in_production": IN_PRODUCTION, "version": VERSION})
 
 
 @app.post("/upload_files")
-async def upload_files(files: List[UploadFile] = File(...)):
+def upload_files(files: List[UploadFile] = File(...)):
+
     log.info("Attempt to create a template.")
 
     with TemporaryDirectory() as temp_dir:
-        log.info(f"Temporary directory:{temp_dir}.")
 
         # Make a copy of each uploaded file in a temporary directory.
         for file in files:
@@ -151,8 +147,14 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 shutil.copyfileobj(file.file, temp_file)
 
         # Divide files in .txt and .pdf files.
-        txt_files = [os.path.basename(file) for file in glob.glob(temp_dir + "/" + "*.txt")]
-        coa_files = [os.path.basename(file) for file in glob.glob(temp_dir + "/" + "*.pdf")]
+
+        # txt_files = [os.path.basename(file) for file in glob.glob(temp_dir + "/" + "*.txt")]
+        for file in glob.glob(temp_dir + "/" + "*.txt"):
+            AFile(os.path.basename(file))
+
+        return ""
+            # os.path.basename(file) = AFile()
+        # coa_files = [os.path.basename(file) for file in glob.glob(temp_dir + "/" + "*.pdf")]
 
         # Check if all files meet requirements. If not return feedback to js.
         feedback = check_file_requirements(txt_files, coa_files)
