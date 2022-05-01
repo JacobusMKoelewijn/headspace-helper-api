@@ -1,10 +1,11 @@
+from turtle import up
 from fastapi import FastAPI, UploadFile, File, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import shutil
 from typing import List
-from .data_classes import Solvent, Diluent, Sample, Files, AFile
+from .data_classes import Solvent, Diluent, Sample, FileTypes
 from .create_template import Template
 import glob
 import os
@@ -12,6 +13,7 @@ from tempfile import TemporaryDirectory
 import re
 from . import create_logger
 from .config import IN_PRODUCTION, VERSION
+from os import listdir
 
 log = create_logger(__name__)
 
@@ -141,16 +143,25 @@ def upload_files(files: List[UploadFile] = File(...)):
 
     with TemporaryDirectory() as temp_dir:
 
+        # uploaded_files = []
+
         # Make a copy of each uploaded file in a temporary directory.
         for file in files:
             with open(temp_dir + '/' + file.filename, 'wb') as temp_file:
                 shutil.copyfileobj(file.file, temp_file)
 
-        # Divide files in .txt and .pdf files.
+        # uploaded_files = [file for file in listdir(temp_dir)]
 
-        # txt_files = [os.path.basename(file) for file in glob.glob(temp_dir + "/" + "*.txt")]
-        for file in glob.glob(temp_dir + "/" + "*.txt"):
-            AFile(os.path.basename(file))
+        # print(uploaded_files)
+        # Divide files in .txt and .pdf files.
+        txt_files = [os.path.basename(file) for file in glob.glob(temp_dir + "/" + "*.txt")]
+        
+        file_types = FileTypes(txt_files, temp_dir)
+        # for file in glob.glob(temp_dir + "/" + "*.txt"):
+            # Files(os.path.basename(file), temp_dir)
+        
+        test = Solvent(file_types)
+            
 
         return ""
             # os.path.basename(file) = AFile()
