@@ -103,7 +103,7 @@ uploadForm.addEventListener('submit', e => {
                 const blob = new Blob([response], {
                     type: 'application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 });
-                console.log(blob);
+//                console.log(blob);
                 const downloadUrl = URL.createObjectURL(blob);
                 console.log(downloadUrl);
                 const a = document.createElement('a');
