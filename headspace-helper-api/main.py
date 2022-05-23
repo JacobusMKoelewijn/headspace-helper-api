@@ -2,15 +2,15 @@ from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-import shutil
-from typing import List
+from tempfile import TemporaryDirectory
 from .store_data import Solvent, Diluent, Sample, Files
+from .config import IN_PRODUCTION, VERSION
 from .create_template import Template
+from . import create_logger, https_url_for
+from typing import List
+import shutil
 import glob
 import os
-from tempfile import TemporaryDirectory
-from . import create_logger
-from .config import IN_PRODUCTION, VERSION
 
 log = create_logger(__name__)
 
@@ -21,18 +21,6 @@ else:
 
 app.mount("/static", StaticFiles(directory="headspace-helper-api/static"), name="static")
 templates = Jinja2Templates(directory="headspace-helper-api/templates")
-
-
-def https_url_for(request: Request, name: str, **path_params: str) -> str:
-    """
-    Modifies Jinja2 url_for() function to https_url_for() and returns url as https.
-    """
-
-    http_url = request.url_for(name, **path_params)
-
-    return http_url.replace("http", "https", 1)
-
-
 templates.env.globals["https_url_for"] = https_url_for
 
 
@@ -45,11 +33,12 @@ def index(request: Request):
 
 @app.post("/upload_files")
 def upload_files(files: List[UploadFile] = File(...)):
-    log.info("Attempt to create a template.")
+
+    log.info("Creating HS_Quantification Template.xlsx worksheet")
 
     with TemporaryDirectory() as temp_dir:
 
-        # Make a copy of each uploaded file in a temporary directory.
+        # Make a copy of each uploaded file in temp_dir.
         for file in files:
             with open(temp_dir + '/' + file.filename, 'wb') as temp_file:
                 shutil.copyfileobj(file.file, temp_file)

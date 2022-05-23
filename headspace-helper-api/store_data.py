@@ -63,7 +63,7 @@ class Files:
 
     def get_unique_sample_code(self):
         """
-        Return a set with unique sample codes extracted from all txt_files.
+        Return a set with unique sample codes extracted from all .txt files.
         """
 
         for file in self.txt_files:
@@ -91,12 +91,12 @@ class Files:
 
     def extract_data(self, solvent, filename):
         """
-        Extract the retention time, peak area, and peak height from the data files and return as either integer or
-        float for every solvent in [solvents]. Only extract the data below the '[Peak Table (Ch1)]' line and stop
-        extracting once a solvent has been found. If no solvent has been found return (0,0,0).
+        Extract the peak retention time, area, and height from uploaded .txt files and return as a dictionary
+        for every solvent object. Only extract the data below the '[Peak Table (Ch1)]' line and stop
+        extracting once a solvent has been found.
         """
 
-        peak_data = {"retention time": 0, "area": 0, "height": 0}
+        peak_data = {"retention time": None, "area": None, "height": None}
 
         try:
             with open(self.temp_dir + "/" + filename) as file:
@@ -129,7 +129,7 @@ class Files:
 
 class Sample:
     """
-    Class to store tag attributes for every unique sample and every solvent.
+    Store tag attributes for every unique sample and every solvent.
     """
 
     def __init__(self, solvent_objects, sample_code, files):
@@ -152,7 +152,7 @@ class Sample:
 
 class Diluent:
     """
-    Class to store information found in CoA data for Diluent.
+    Store information found in CoA data for diluent.
     """
 
     def __init__(self, solvent_coa_data):
@@ -166,8 +166,8 @@ class Diluent:
 
 class Solvent(Diluent):
     """
-    Class to store information found in CoA data for solvent and in addition the retention time, peak area, and peak
-    height as solvent attributes.
+    Store information found in CoA data for solvent.
+    Set attributes with peak_data dictionary by calling the extract_data method.
     """
 
     def __init__(self, solvent_coa_data, files):
